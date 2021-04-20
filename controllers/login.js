@@ -82,7 +82,7 @@ exports.register = (req, res, next) => {
         message = null;
     }
 
-    res.render('login/register', {pageTitle: 'Register', message: message})
+    res.render('login/register', {pageTitle: 'Register', message: message, captcha: res.recaptcha})
 }
 
 exports.postRegister = (req, res, next) => {
@@ -99,6 +99,11 @@ exports.postRegister = (req, res, next) => {
 
     if(req.body.password != req.body.password2){
         req.flash('error', 'Passwords do not match!')
+        return res.redirect('/login/register')
+    }
+
+    if(req.recaptcha.error){
+        req.flash('error', 'Please fill captcha! Are you secretly a robot?')
         return res.redirect('/login/register')
     }
 

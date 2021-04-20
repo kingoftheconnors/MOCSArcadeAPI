@@ -5,17 +5,23 @@ const router = express.Router();
 const loginController = require('../controllers/login')
 const isAuth = require('../middleware/is-auth')
 
+/**
+ * Recaptcha
+ */
+const Recaptcha = require('express-recaptcha').RecaptchaV2;
+const recaptcha = new Recaptcha(process.env.RECAPTCHA_SITE_KEY, process.env.RECAPTCHA_SECRET_KEY);
+
 //Here our gets are returning stuff
 
 router.get('/',  isAuth.isNotLoggedIn, loginController.login);
 
-router.get('/register', isAuth.isNotLoggedIn, loginController.register)
+router.get('/register', recaptcha.middleware.render, isAuth.isNotLoggedIn, loginController.register)
 
 //Here our posts are doing stuff
 
 router.post('/', isAuth.isNotLoggedIn, loginController.postLogin)
 
-router.post('/register',  isAuth.isNotLoggedIn, loginController.postRegister)
+router.post('/register',  recaptcha.middleware.verify, isAuth.isNotLoggedIn, loginController.postRegister)
 
 // Email authentication
 
