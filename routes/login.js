@@ -13,13 +13,13 @@ const recaptcha = new Recaptcha(process.env.RECAPTCHA_SITE_KEY, process.env.RECA
 
 //Here our gets are returning stuff
 
-router.get('/',  isAuth.isNotLoggedIn, loginController.login);
+router.get('/', recaptcha.middleware.render,  isAuth.isNotLoggedIn, loginController.login);
 
 router.get('/register', recaptcha.middleware.render, isAuth.isNotLoggedIn, loginController.register)
 
 //Here our posts are doing stuff
 
-router.post('/', isAuth.isNotLoggedIn, loginController.postLogin)
+router.post('/', recaptcha.middleware.verify, isAuth.isNotLoggedIn, loginController.postLogin)
 
 router.post('/register',  recaptcha.middleware.verify, isAuth.isNotLoggedIn, loginController.postRegister)
 

@@ -34,11 +34,18 @@ exports.login = (req, res, next) =>{
 
         res.render('login/login', {
             pageTitle: 'Welcome!!!',
-            errorMessage: message
+            errorMessage: message,
+            captcha: res.recaptcha
         })
 }
 
 exports.postLogin = (req, res, next) => {
+
+    if(req.recaptcha.error){
+        req.flash('error', 'Please fill captcha! Are you secretly a robot?')
+        return res.redirect('/login')
+    }
+
     const username = req.body.username;
     const pass = req.body.password;
     User.findOne({username: username})
